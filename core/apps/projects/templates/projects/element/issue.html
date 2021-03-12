@@ -1,0 +1,51 @@
+<tr>
+    <td>
+        <span class="icon has-text-{{ issue.color }}">
+            <i class="{{ issue.icon }}"></i>
+        </span>
+    </td>
+    <td>
+        <span>{{ issue.title }}</span>
+    </td>
+    <td>
+        {% if issue.tasks.all %}
+        <span class="icon has-text-info">
+            <i class="fas fa-tasks"></i>
+        </span>
+        {% endif %}
+
+        <span class="tag is-rounded is-danger">{{ issue.get_points_display }}</span>
+        <span class="tag is-rounded is-warning">{{ issue.get_trust_display }}</span>
+        <span class="tag is-rounded is-primary">{{ issue.get_status_display }}</span>
+
+        {% include 'projects/card/issue.html' %}
+    </td>
+
+    <td>
+        {% if not issue.epic.is_auto %}
+        <span class="icon-text has-text-{{ issue.epic.color }}">
+            <span class="icon">
+                <i class="{{ issue.epic.icon }}"></i>
+            </span>
+            <span>{{ issue.epic.title }}</span>
+        </span>
+        <br>
+        {% endif %}
+
+        <span class="icon-text has-text-{{ issue.feature.color }}">
+            <span class="icon">
+                <i class="{{ issue.feature.icon }}"></i>
+            </span>
+            <span>{{ issue.feature.title }}</span>
+        </span>
+        <br>
+
+        <span class="icon-text has-text-{{ issue.skill.color }}">
+            <span class="icon">
+                <i class="{{ issue.skill.icon }}"></i>
+            </span>
+            <span>{{ issue.skill.title }}</span>
+        </span>
+        <br>
+    </td>
+</tr>

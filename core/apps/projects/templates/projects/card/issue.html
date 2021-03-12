@@ -1,0 +1,68 @@
+<a onclick="myFunction{{ issue.id }}()">
+<span class="icon">
+    <i class="fas fa-external-link-alt"></i>
+</span>
+</a>
+
+<div class="modal" id="{{ issue.id }}">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">
+                <span class="icon-text">
+                    <span class="icon has-text-{{ issue.color }}">
+                        <i class="{{ issue.icon }}"></i>
+                    </span>
+                    <span>#{{ issue.id }}</span>
+                </span>
+                <span class="tag is-rounded is-danger">{{ issue.get_points_display }}</span>
+                <span class="tag is-rounded is-warning">{{ issue.get_trust_display }}</span>
+                <span class="tag is-rounded is-primary">{{ issue.get_status_display }}</span>
+            </p>
+            <button onclick="myFunction{{ issue.id }}()" class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <p class="has-text-weight-bold">{{ issue.title }}</p>
+            <p class="content">{{ issue.description }}</p>
+            <p class="is-italic">Tasks:</p>
+            <ul>
+                {% for task in issue.tasks.all %}
+                <li>
+                    <span class="icon-text has-text-{{ task.color }}">
+                        <span class="icon">
+                            <i class="{{ task.icon }}"></i>
+                        </span>
+                        <span>{{ task.title }}</span>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            <br>
+            <p class="is-italic">Acceptance Criteria:</p>
+            <ul>
+                {% for acceptance_criterion in issue.acceptance_criteria.all %}
+                <li>
+                    <span class="icon-text">
+                        <span class="icon has-text-{{ acceptance_criterion.color }}">
+                            <i class="{{ acceptance_criterion.icon }}"></i>
+                        </span>
+                        <span>{{ acceptance_criterion.title }}</span>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+
+        </section>
+        <footer class="modal-card-foot">
+            <button onclick="myFunction{{ issue.id }}()" class="button">Cancel</button>
+        </footer>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function myFunction{{ issue.id }}() {
+        var element = document.getElementById("{{ issue.id }}");
+        element.classList.toggle("is-active");
+    }
+</script>

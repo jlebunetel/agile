@@ -1,0 +1,60 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+{% load markdown %}
+
+{% block robots %}
+<meta name="robots" content="all, index, follow">
+{% endblock robots %}
+
+{% block page_css %}
+{% render_bundle 'home' 'css' %}
+{% endblock page_css %}
+
+{% block page_js %}
+{% render_bundle 'home' 'js' %}
+{% endblock page_js %}
+
+{% block page_content %}
+<div id="home">
+    <h2 class="title">
+        <span class="icon-text">
+            <span class="icon">
+                <i class="fas fa-paper-plane"></i>
+            </span>
+            <span class="ml-2">Products</span>
+        </span>
+    </h2>
+
+    {% for product in object_list %}
+    <div class="block">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-title">
+                    <a href="{% url 'projects:product-detail' product.id %}">
+                        <span class="icon-text">
+                            <span class="icon">
+                                <i class="{{ product.icon }}"></i>
+                            </span>
+                            <span>{{ product.title }}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            {% if product.description %}
+            <div class="card-content">
+                <div class="content">
+                    {{ product.description|render|safe }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
+
+    <div class="content">
+
+    </div>
+</div>
+{% endblock page_content %}
