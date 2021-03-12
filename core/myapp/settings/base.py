@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     # "allauth.socialaccount.providers.twitter",
     # "allauth.socialaccount.providers.openid",
     "core.apps.CoreConfig",
+    "projects.apps.ProjectsConfig",
     "webpack_loader",
     "simple_history",
     "widget_tweaks",
     "django_celery_results",
+    "ordered_model",
 ]
 
 # Middewares

@@ -1,0 +1,216 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+
+{% block robots %}
+<meta name="robots" content="all, index, follow">
+{% endblock robots %}
+
+{% block page_css %}
+{% render_bundle 'home' 'css' %}
+{% endblock page_css %}
+
+{% block page_js %}
+{% render_bundle 'home' 'js' %}
+{% endblock page_js %}
+
+{% block page_content %}
+<div id="home">
+    <h2 class="title">
+        <span class="icon-text">
+            <span class="icon">
+                <i class="fas fa-stopwatch"></i>
+            </span>
+            <span class="ml-2">{{ sprint.title }} ({{ sprint.started_at }} -> {{ sprint.finished_at }})</span>
+        </span>
+    </h2>
+
+    <section class="section">
+        <h3 class="is-size-3 has-text-centered">
+            <span class="icon-text">
+                <span class="icon">
+                    <i class="fas fa-tasks"></i>
+                </span>
+                <span class="ml-2">Sprint Backlog</span>
+            </span>
+        </h3>
+        <br>
+
+        <table class="table is-fullwidth is-hoverable">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th width="20%"></th>
+                    <th width="15%">Epics</th>
+                    <th width="15%">Features</th>
+                    <th width="15%">Skills</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in sprint.issues.all %}
+                {% include 'projects/element/issue.html' %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="section">
+        <div class="columns is-8 is-variable">
+            <div class="column">
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-bookmark"></i>
+                        </span>
+                        <span class="ml-2">To Do</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.issues.all %}
+                {% if issue.status == 'TO_DO' %}
+                <div class="box">
+                    <span class="icon-text has-text-{{ issue.color }}">
+                        <span class="icon">
+                            <i class="{{ issue.icon }}"></i>
+                        </span>
+                        <span>{{ issue.title }}</span>
+                    </span>
+                    <p class="content">{{ issue.description }}</p>
+
+                    <p class="is-italic">Tasks:</p>
+                    <ul>
+                        {% for task in issue.tasks.all %}
+                        <li>
+                            <span class="icon-text has-text-{{ task.color }}">
+                                <span class="icon">
+                                    <i class="{{ task.icon }}"></i>
+                                </span>
+                                <span>{{ task.title }}</span>
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="column">
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-bookmark"></i>
+                        </span>
+                        <span class="ml-2">In Progress</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.issues.all %}
+                {% if issue.status == 'IN_PROGRESS' %}
+                <div class="box">
+                    <span class="icon-text has-text-{{ issue.color }}">
+                        <span class="icon">
+                            <i class="{{ issue.icon }}"></i>
+                        </span>
+                        <span>{{ issue.title }}</span>
+                    </span>
+                    <p class="content">{{ issue.description }}</p>
+
+                    <p class="is-italic">Tasks:</p>
+                    <ul>
+                        {% for task in issue.tasks.all %}
+                        <li>
+                            <span class="icon-text has-text-{{ task.color }}">
+                                <span class="icon">
+                                    <i class="{{ task.icon }}"></i>
+                                </span>
+                                <span>{{ task.title }}</span>
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="column">
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-bookmark"></i>
+                        </span>
+                        <span class="ml-2">In Review</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.issues.all %}
+                {% if issue.status == 'IN_REVIEW' %}
+                <div class="box">
+                    <span class="icon-text has-text-{{ issue.color }}">
+                        <span class="icon">
+                            <i class="{{ issue.icon }}"></i>
+                        </span>
+                        <span>{{ issue.title }}</span>
+                    </span>
+                    <p class="content">{{ issue.description }}</p>
+
+                    <p class="is-italic">Tasks:</p>
+                    <ul>
+                        {% for task in issue.tasks.all %}
+                        <li>
+                            <span class="icon-text has-text-{{ task.color }}">
+                                <span class="icon">
+                                    <i class="{{ task.icon }}"></i>
+                                </span>
+                                <span>{{ task.title }}</span>
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="column">
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-bookmark"></i>
+                        </span>
+                        <span class="ml-2">Done</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.issues.all %}
+                {% if issue.status == 'DONE' %}
+                <div class="box">
+                    <span class="icon-text has-text-{{ issue.color }}">
+                        <span class="icon">
+                            <i class="{{ issue.icon }}"></i>
+                        </span>
+                        <span>{{ issue.title }}</span>
+                    </span>
+                    <p class="content">{{ issue.description }}</p>
+
+                    <p class="is-italic">Tasks:</p>
+                    <ul>
+                        {% for task in issue.tasks.all %}
+                        <li>
+                            <span class="icon-text has-text-{{ task.color }}">
+                                <span class="icon">
+                                    <i class="{{ task.icon }}"></i>
+                                </span>
+                                <span>{{ task.title }}</span>
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock page_content %}

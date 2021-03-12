@@ -1,0 +1,105 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% load render_bundle from webpack_loader %}
+{% load markdown %}
+
+{% block robots %}
+<meta name="robots" content="all, index, follow">
+{% endblock robots %}
+
+{% block page_css %}
+{% render_bundle 'home' 'css' %}
+{% endblock page_css %}
+
+{% block page_js %}
+{% render_bundle 'home' 'js' %}
+{% endblock page_js %}
+
+{% block page_content %}
+<div id="home">
+    <h2 class="title">
+        <span class="icon-text">
+            <span class="icon">
+                <i class="fas fa-stopwatch"></i>
+            </span>
+            <span class="ml-2">Sprints</span>
+        </span>
+    </h2>
+
+    <section class="section">
+        {% for sprint in object_list %}
+        <div class="block">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-title">
+                        <a href="{% url 'projects:sprint-detail' sprint.id %}">
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="{{ sprint.icon }}"></i>
+                                </span>
+                                <span>{{ sprint.title }} ({{ sprint.started_at }} -> {{ sprint.finished_at }})</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                {% if sprint.description %}
+                <div class="card-content">
+                    <div class="content">
+                        {{ sprint.description|render|safe }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    <section class="section">
+        <div class="columns is-vcentered">
+            <div class="column is-1 is-offset-2">
+                Week #1
+            </div>
+            <div class="column is-1">
+                Week #2
+            </div>
+            <div class="column is-1">
+                Week #3
+            </div>
+            <div class="column is-1">
+                Week #4
+            </div>
+            <div class="column is-1">
+                Week #5
+            </div>
+            <div class="column is-1">
+                Week #6
+            </div>
+            <div class="column is-1">
+                Week #7
+            </div>
+            <div class="column is-1">
+                Week #8
+            </div>
+            <div class="column is-1">
+                Week #9
+            </div>
+            <div class="column is-1">
+                Week #10
+            </div>
+        </div>
+        {% for sprint in object_list %}
+        <div class="columns is-vcentered">
+            <div class="column is-2">
+                <button class="button is-info is-fullwidth">
+                    {{ sprint.title }}
+                </button>
+            </div>
+            <div class="column is-2 is-offset-{{ sprint.id }}">
+                <progress class="progress is-info is-large" value="100" max="100">100%</progress>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+</div>
+{% endblock page_content %}
