@@ -1,19 +1,14 @@
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-from projects.models import Product, Sprint
+from projects.models import (
+    Product,
+)
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
 
 
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, ListView):
     model = Product
-
-
-class SprintDetailView(DetailView):
-    model = Sprint
-
-
-class SprintListView(ListView):
-    model = Sprint

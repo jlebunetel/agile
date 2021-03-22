@@ -2,10 +2,20 @@ from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
 from ordered_model.models import OrderedModel
 from simple_history.models import HistoricalRecords
-from projects.models import BaseModel, Product
+from projects.models import (
+    BaseModel,
+    Product,
+    ProgressMixin,
+    TrustMixin,
+)
 
 
-class Initiative(BaseModel, OrderedModel):
+class Initiative(
+    ProgressMixin,
+    TrustMixin,
+    BaseModel,
+    OrderedModel,
+):
     history = HistoricalRecords()
 
     product = models.ForeignKey(
@@ -15,8 +25,6 @@ class Initiative(BaseModel, OrderedModel):
         related_query_name="initiative",
         verbose_name=_("product"),
     )
-
-    # color
 
     order_with_respect_to = "product"
 
@@ -38,21 +46,38 @@ class Initiative(BaseModel, OrderedModel):
 
     @property
     def icon(self):
-        return "fas fa-cloud"
+        return "fas fa-cogs"
 
     @property
-    def parent(self):
-        return self.product
+    def shortcut(self):
+        return "#I{}".format(self.id)
+
+    def total_story_points(self):
+        points = 0
+
+        for feature in self.features.all():
+            points += feature.total_story_points()
+
+        return points
+
+    def remaining_story_points(self):
+        points = 0
+
+        for feature in self.features.all():
+            points += feature.remaining_story_points()
+
+        return points
 
     @property
-    def is_auto(self):
-        return self.title == self.parent.title
+    def trust(self):
+        from projects.models import Feature
 
-    @property
-    def issues(self):
-        from projects.models import Issue
+        for feature in self.features.all():
+            if feature.trust == Feature.LOW:
+                return self.LOW
 
-        return Issue.objects.filter(epic__initiative=self)
+        for feature in self.features.all():
+            if feature.trust == Feature.MEDIUM:
+                return self.MEDIUM
 
-    def __str__(self):
-        return "[I{}] {}".format(self.id, self.title)
+        return self.HIGH

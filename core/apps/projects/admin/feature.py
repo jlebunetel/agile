@@ -1,47 +1,48 @@
 from django.contrib import admin
-from ordered_model.admin import (
-    OrderedInlineModelAdminMixin,
-    OrderedModelAdmin,
-    OrderedTabularInline,
-)
 from simple_history.admin import SimpleHistoryAdmin
-from projects.admin import BaseModelMixin, BaseInlineOrderMixin, EpicInline, IssueInline
+from projects.admin import (
+    BaseModelMixin,
+    BaseInlineMixin,
+    EpicInline,
+)
 from projects.models import Feature
 
 
-class FeatureInline(BaseInlineOrderMixin, OrderedTabularInline):
+class FeatureInline(
+    BaseInlineMixin,
+    admin.TabularInline,
+):
     model = Feature
 
     fields = (
         "id",
         "title",
-        "product",
-        "move_up_down_links",
+        "initiative",
+        "priority",
     )
-
-    readonly_fields = ("move_up_down_links",)
-
-    ordering = ("order",)
 
 
 class FeatureAdmin(
-    OrderedInlineModelAdminMixin, BaseModelMixin, SimpleHistoryAdmin, OrderedModelAdmin
+    BaseModelMixin,
+    SimpleHistoryAdmin,
 ):
     fields = (
-        "product",
+        "initiative",
+        "priority",
         "title",
         "description",
     )
 
     list_display = (
         "__str__",
-        "product",
+        "initiative",
+        "priority",
         "description",
+        "product",
     )
 
     inlines = [
         EpicInline,
-        IssueInline,
     ]
 
 

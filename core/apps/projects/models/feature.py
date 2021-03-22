@@ -1,35 +1,40 @@
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
-from ordered_model.models import OrderedModel
 from simple_history.models import HistoricalRecords
-from projects.models import BaseModel, Product
+from projects.models import (
+    BaseModel,
+    Initiative,
+    PriorityMixin,
+    ProgressMixin,
+    TrustMixin,
+)
 
 
-class Feature(BaseModel, OrderedModel):
+class Feature(
+    PriorityMixin,
+    ProgressMixin,
+    TrustMixin,
+    BaseModel,
+):
     history = HistoricalRecords()
 
-    # color
-
-    product = models.ForeignKey(
-        Product,
+    initiative = models.ForeignKey(
+        Initiative,
         on_delete=models.CASCADE,
         related_name="features",
         related_query_name="feature",
-        verbose_name=_("product"),
+        verbose_name=_("initiative"),
     )
 
-    order_with_respect_to = "product"
-
-    class Meta(BaseModel.Meta, OrderedModel.Meta):
+    class Meta(BaseModel.Meta):
         verbose_name = _("feature")
         verbose_name_plural = _("features")
 
-        ordering = ["order"]
-
-        constraints = [
-            models.UniqueConstraint(
-                fields=["title", "product"], name="feature_title_unique_per_product"
-            )
+        ordering = [
+            "initiative__product",
+            "initiative__order",
+            "-priority",
+            "created_at",
         ]
 
     @property
@@ -38,11 +43,42 @@ class Feature(BaseModel, OrderedModel):
 
     @property
     def icon(self):
-        return "fas fa-tag"
+        return "fas fa-cog"
 
     @property
-    def parent(self):
-        return self.product
+    def shortcut(self):
+        return "#F{}".format(self.id)
 
-    def __str__(self):
-        return "[F{}] {}".format(self.id, self.title)
+    @property
+    def product(self):
+        return self.initiative.product
+
+    def total_story_points(self):
+        points = 0
+
+        for epic in self.epics.all():
+            points += epic.total_story_points()
+
+        return points
+
+    def remaining_story_points(self):
+        points = 0
+
+        for epic in self.epics.all():
+            points += epic.remaining_story_points()
+
+        return points
+
+    @property
+    def trust(self):
+        from projects.models import Epic
+
+        for epic in self.epics.all():
+            if epic.trust == Epic.LOW:
+                return self.LOW
+
+        for epic in self.epics.all():
+            if epic.trust == Epic.MEDIUM:
+                return self.MEDIUM
+
+        return self.HIGH

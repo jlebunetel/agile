@@ -1,0 +1,20 @@
+<a href="{{ item.get_edit_url }}" class="has-text-{{ item.color }}">
+    <span class="icon-text">
+        <span class="icon">
+            <i class="{{ item.icon }}"></i>
+        </span>
+        <span>[{{ item.shortcut }}]</span>
+    </span>
+    {% if item.subtasks.all %}
+        <span class="icon">
+            <i class="fas fa-tasks"></i>
+        </span>
+    {% endif %}
+</a>
+{% if item.status and item.status == item.DONE %}
+<span class="has-text-grey-light">{{ item.title }}</span>
+{% elif item.status and item.status == item.CANCELLED %}
+<del class="has-text-grey-light">{{ item.title }}</del>
+{% else %}
+<span>{{ item.title }}</span>
+{% endif %}

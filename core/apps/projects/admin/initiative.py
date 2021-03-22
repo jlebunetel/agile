@@ -1,15 +1,18 @@
 from django.contrib import admin
-from ordered_model.admin import (
-    OrderedInlineModelAdminMixin,
-    OrderedModelAdmin,
-    OrderedTabularInline,
-)
+from ordered_model.admin import OrderedTabularInline
 from simple_history.admin import SimpleHistoryAdmin
-from projects.admin import BaseModelMixin, BaseInlineOrderMixin, EpicInline
+from projects.admin import (
+    BaseModelMixin,
+    BaseInlineOrderMixin,
+    FeatureInline,
+)
 from projects.models import Initiative
 
 
-class InitiativeInline(BaseInlineOrderMixin, OrderedTabularInline):
+class InitiativeInline(
+    BaseInlineOrderMixin,
+    OrderedTabularInline,
+):
     model = Initiative
 
     fields = (
@@ -23,7 +26,8 @@ class InitiativeInline(BaseInlineOrderMixin, OrderedTabularInline):
 
 
 class InitiativeAdmin(
-    OrderedInlineModelAdminMixin, BaseModelMixin, SimpleHistoryAdmin, OrderedModelAdmin
+    BaseModelMixin,
+    SimpleHistoryAdmin,
 ):
 
     fields = (
@@ -34,11 +38,14 @@ class InitiativeAdmin(
 
     list_display = (
         "__str__",
+        "description",
         "product",
     )
 
+    list_filter = ("product",)
+
     inlines = [
-        EpicInline,
+        FeatureInline,
     ]
 
 
