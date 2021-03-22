@@ -50,4 +50,4 @@ class Subtask(BaseModel, OrderedModel):
 
     @property
     def shortcut(self):
-        return "#ST{}".format(self.id)
+        return "ST{}".format(self.id)

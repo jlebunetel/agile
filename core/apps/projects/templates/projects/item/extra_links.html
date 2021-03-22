@@ -1,0 +1,19 @@
+{% if item.description or item.subtasks.all %}
+{% include "projects/modal/description.html" %}
+{% endif %}
+{% if item.epics.all %}
+<span class="icon-text has-text-grey-lighter">
+    <span class="icon">
+        <i class="fas fa-book"></i>
+    </span>
+    <span>{{ item.epics.count }}</span>
+</span>
+{% endif %}
+{% if item.issues.all %}
+<span class="icon-text has-text-grey-lighter">
+    <span class="icon">
+        <i class="fas fa-bookmark"></i>
+    </span>
+    <span>{{ item.issues.count }}</span>
+</span>
+{% endif %}

@@ -180,7 +180,7 @@ class Issue(
 
     @property
     def shortcut(self):
-        return "#{}{}".format(self.label[0].upper(), self.id)
+        return "{}{}".format(self.label[0].upper(), self.id)
 
     @property
     def product(self):
