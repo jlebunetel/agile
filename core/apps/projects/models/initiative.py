@@ -50,7 +50,7 @@ class Initiative(
 
     @property
     def shortcut(self):
-        return "#I{}".format(self.id)
+        return "I{}".format(self.id)
 
     def total_story_points(self):
         points = 0

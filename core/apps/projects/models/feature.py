@@ -47,7 +47,7 @@ class Feature(
 
     @property
     def shortcut(self):
-        return "#F{}".format(self.id)
+        return "F{}".format(self.id)
 
     @property
     def product(self):

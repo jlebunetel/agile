@@ -146,6 +146,7 @@
                             </span>
                         </span>
                         {% include "projects/item/full_title.html" with item=initiative %}
+                        {% include "projects/item/extra_links.html" with item=initiative %}
                     </th>
                     <th class="has-text-right" width="30%">
                         {% include "projects/item/progress.html" with item=initiative %}
@@ -178,6 +179,7 @@
                         </span>
                         {% endif %}
                         {% include "projects/item/full_title.html" with item=feature %}
+                        {% include "projects/item/extra_links.html" with item=feature %}
                     </td>
                     <td class="has-text-right">
                         {% include "projects/item/progress.html" with item=feature %}
@@ -210,6 +212,7 @@
                         </span>
                         {% endif %}
                         {% include "projects/item/full_title.html" with item=epic %}
+                        {% include "projects/item/extra_links.html" with item=epic %}
                     </td>
                     <td class="has-text-right">
                         {% include "projects/item/progress.html" with item=epic %}
@@ -236,6 +239,7 @@
                             </span>
                         </span>
                         {% include "projects/item/full_title.html" with item=issue %}
+                        {% include "projects/item/extra_links.html" with item=issue %}
                     </td>
                     <td class="has-text-right">
                         {% for skill in issue.skills.all %}

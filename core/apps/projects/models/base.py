@@ -1,3 +1,4 @@
+import markdown
 import uuid
 from django.conf import settings
 from django.db import models
@@ -155,3 +156,7 @@ class BaseModel(models.Model):
             "admin:%s_%s_change" % (self._meta.app_label, self._meta.model_name),
             args=(self.id,),
         )
+
+    @property
+    def description_html(self):
+        return markdown.markdown(self.description)

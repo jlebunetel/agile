@@ -40,10 +40,6 @@ class IssueInlineAdminForm(IssueAdminCleanMixin, forms.ModelForm):
         super(IssueInlineAdminForm, self).__init__(*args, **kwargs)
 
         if self.instance and self.instance.id:
-            if "label" in self.fields:
-                # self.fields["label"].widget.attrs["readonly"] = "readonly"
-                self.fields["label"].disabled = True
-
             if "status" in self.fields:
                 if self.instance.status != self.instance.DRAFT:
                     self.fields["points"].disabled = True
@@ -121,9 +117,6 @@ class IssueAdmin(
         readonly_fields = ()
 
         if obj:
-            if hasattr(obj, "label"):
-                readonly_fields += ("label",)
-
             if hasattr(obj, "status"):
                 if obj.status != obj.DRAFT:
                     readonly_fields += (

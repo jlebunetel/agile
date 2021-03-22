@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get all "expand-button" elements
     const $expandButton = Array.prototype.slice.call(document.querySelectorAll('.expand-button'), 0);
 
-    // Check if there are any navbar burgers
+    // Check if there are any expand button
     if ($expandButton.length > 0) {
 
         // Add a click event on each of them
@@ -71,6 +71,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Toggle
                 el.children[0].children[0].classList.toggle('fa-angle-right');
                 el.children[0].children[0].classList.toggle('fa-angle-down');
+
+            });
+        });
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all "modal-button" elements
+    const $modalButton = Array.prototype.slice.call(document.querySelectorAll('.modal-button'), 0);
+
+    // Check if there are any modal button
+    if ($modalButton.length > 0) {
+
+        // Add a click event on each of them
+        $modalButton.forEach(el => {
+            el.addEventListener('click', () => {
+
+                // Get targets from the "data-target" attribute
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+
+                // Toggle the "is-active" class
+                $target.classList.toggle('is-active');
 
             });
         });

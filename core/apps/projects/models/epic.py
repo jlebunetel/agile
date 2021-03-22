@@ -50,7 +50,7 @@ class Epic(
 
     @property
     def shortcut(self):
-        return "#E{}".format(self.id)
+        return "E{}".format(self.id)
 
     @property
     def product(self):

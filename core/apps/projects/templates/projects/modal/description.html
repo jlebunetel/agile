@@ -1,0 +1,39 @@
+<a class="modal-button" data-target="{{ item.shortcut }}">
+    <span class="icon has-text-grey-lighter">
+        <i class="fas fa-comment"></i>
+    </span>
+</a>
+<div class="modal" id="{{ item.shortcut }}">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">{% include "projects/item/full_title.html" %}</p>
+            <button class="delete modal-button" aria-label="close" data-target="{{ item.shortcut }}"></button>
+        </header>
+        <section class="modal-card-body">
+            {% if item.description %}
+            <p class="is-italic has-text-weight-bold">Description:</p>
+            <p class="content">{{ item.description_html|safe }}</p>
+            <br>
+            {% endif %}
+
+            {% if item.subtasks.all %}
+            <p class="is-italic has-text-weight-bold">Subtasks:</p>
+            <br>
+            <ul>
+                {% for subtask in item.subtasks.all %}
+                <li>
+                    <span class="icon-text has-text-{{ subtask.color }}">
+                        <span class="icon">
+                            <i class="{{ subtask.icon }}"></i>
+                        </span>
+                        <span>{{ subtask.title }}</span>
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            <br>
+            {% endif %}
+        </section>
+    </div>
+</div>
