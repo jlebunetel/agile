@@ -19,7 +19,7 @@
     <h2 class="title">
         <span class="icon-text">
             <span class="icon">
-                <i class="fas fa-paper-plane"></i>
+                <i class="{{ object.icon }}"></i>
             </span>
             <span class="ml-2">{{ object.title }}</span>
         </span>
@@ -43,12 +43,25 @@
                         <p class="heading">
                             <span class="icon-text has-text-link">
                                 <span class="icon">
-                                    <i class="fas fa-cloud"></i>
+                                    <i class="fas fa-cogs"></i>
                                 </span>
                                 <span>Initiatives</span>
                             </span>
                         </p>
                         <p class="title">{{ object.total_initiatives }}</p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">
+                            <span class="icon-text has-text-primary">
+                                <span class="icon">
+                                    <i class="fas fa-cog"></i>
+                                </span>
+                                <span>Features</span>
+                            </span>
+                        </p>
+                        <p class="title">{{ object.total_features }}</p>
                     </div>
                 </div>
                 <div class="level-item has-text-centered">
@@ -93,27 +106,14 @@
                 <div class="level-item has-text-centered">
                     <div>
                         <p class="heading">
-                            <span class="icon-text has-text-primary">
+                            <span class="icon-text has-text-dark">
                                 <span class="icon">
-                                    <i class="fas fa-tag"></i>
+                                    <i class="fas fa-tasks"></i>
                                 </span>
-                                <span>Features</span>
+                                <span>Tasks</span>
                             </span>
                         </p>
-                        <p class="title">{{ object.total_features }}</p>
-                    </div>
-                </div>
-                <div class="level-item has-text-centered">
-                    <div>
-                        <p class="heading">
-                            <span class="icon-text has-text-link">
-                                <span class="icon">
-                                    <i class="fas fa-user-tag"></i>
-                                </span>
-                                <span>Skills</span>
-                            </span>
-                        </p>
-                        <p class="title">{{ object.total_skills }}</p>
+                        <p class="title">{{ object.total_tasks }}</p>
                     </div>
                 </div>
                 <div class="level-item has-text-centered">
@@ -130,155 +130,244 @@
         <h3 class="is-size-3 has-text-centered">
             <span class="icon-text">
                 <span class="icon">
-                    <i class="fas fa-tasks"></i>
+                    <i class="fas fa-map-signs"></i>
                 </span>
-                <span class="ml-2">Backlog</span>
+                <span class="ml-2">Product Roadmap</span>
             </span>
         </h3>
-        <br>
-
         <table class="table is-fullwidth is-hoverable">
             {% for initiative in object.initiatives.all %}
-            {% if not initiative.is_auto %}
             <thead>
                 <tr>
-                    <th>
-                        <span class="icon has-text-{{ initiative.color }}">
-                            <i class="{{ initiative.icon }}"></i>
+                    <th colspan="4">
+                        <span class=has-text-grey-lighter>
+                            <span class="icon">
+                                <i class="fas fa-angle-down"></i>
+                            </span>
                         </span>
+                        {% include "projects/item/full_title.html" with item=initiative %}
                     </th>
-                    <th>
-                        <span class="has-text-{{ initiative.color }}">{{ initiative.title }}</span>
+                    <th class="has-text-right" width="30%">
+                        {% include "projects/item/progress.html" with item=initiative %}
                     </th>
-                    <th width="20%"></th>
-                    <th width="25%">Epics / Features / Skills</th>
+                    <td class="has-text-centered">
+                        {% include "projects/item/points_tag.html" with item=initiative %}
+                    </td>
+                    <th class="has-text-centered" width="3%">
+                    </th>
+                    <th class="has-text-centered" width="3%">
+                    </th>
                 </tr>
             </thead>
             <tbody>
-                {% for issue in initiative.issues %}
-                {% include 'projects/element/issue.html' %}
-                {% endfor %}
-            </tbody>
-            {% endif %}
-            {% endfor %}
-
-            {% for initiative in object.initiatives.all %}
-            {% if initiative.is_auto %}
-            <thead>
+                {% for feature in initiative.features.all %}
                 <tr>
-                    <th></th>
-                    <th colspan="2">unclassified...</th>
-                    <th>Epics / Features / Skills</th>
+                    <td></td>
+                    <td colspan="3">
+                        {% if feature.epics.all %}
+                        <span class="expand-button" data-target="feature_{{ feature.id }}">
+                            <span class="icon">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        </span>
+                        {% else %}
+                        <span class="has-text-grey-lighter">
+                            <span class="icon">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        </span>
+                        {% endif %}
+                        {% include "projects/item/full_title.html" with item=feature %}
+                    </td>
+                    <td class="has-text-right">
+                        {% include "projects/item/progress.html" with item=feature %}
+                    </td>
+                    <td class="has-text-centered">
+                        {% include "projects/item/points_tag.html" with item=feature %}
+                    </td>
+                    <td class="has-text-centered">
+                    </td>
+                    <td class="has-text-centered">
+                        {% include "projects/item/priority_tag.html" with item=feature %}
+                    </td>
                 </tr>
-            </thead>
+                {% for epic in feature.epics.all %}
+                <tr class="feature_{{ feature.id }} is-hidden">
+                    <td></td>
+                    <td></td>
+                    <td colspan="2">
+                        {% if epic.issues.all %}
+                        <span class="expand-button" data-target="epic_{{ epic.id }}">
+                            <span class="icon">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        </span>
+                        {% else %}
+                        <span class="has-text-grey-lighter">
+                            <span class="icon">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        </span>
+                        {% endif %}
+                        {% include "projects/item/full_title.html" with item=epic %}
+                    </td>
+                    <td class="has-text-right">
+                        {% include "projects/item/progress.html" with item=epic %}
+                    </td>
+                    <td class="has-text-centered">
+                        {% include "projects/item/points_tag.html" with item=epic %}
+                    </td>
+                    <td class="has-text-centered">
+                    </td>
+                    <td class="has-text-centered">
+                        {% include "projects/item/priority_tag.html" with item=epic %}
+                    </td>
+                </tr>
 
-            <tbody>
-                {% for issue in initiative.issues %}
-                {% include 'projects/element/issue.html' %}
+                {% for issue in epic.issues.all %}
+                <tr class="epic_{{ epic.id }} is-hidden">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <span class="has-text-grey-lighter">
+                            <span class="icon">
+                                <i class="fas fa-angle-right"></i>
+                            </span>
+                        </span>
+                        {% include "projects/item/full_title.html" with item=issue %}
+                    </td>
+                    <td class="has-text-right">
+                        {% for skill in issue.skills.all %}
+                        <span class="tag is-rounded">{{ skill.title }}</span>
+                        {% endfor %}
+                    </td>
+                    <td class="has-text-centered">
+                        {% include "projects/item/points_tag.html" with item=issue %}
+                    </td>
+                    <td class="has-text-centered">
+                        {% include "projects/item/status_tag.html" with item=issue %}
+                    </td>
+                    <td class="has-text-centered">
+                        {% include "projects/item/priority_tag.html" with item=issue %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
                 {% endfor %}
             </tbody>
-            {% endif %}
             {% endfor %}
         </table>
     </section>
 
     <section class="section">
+        <h3 class="is-size-3 has-text-centered">
+            <span class="icon-text">
+                <span class="icon">
+                    <i class="fas fa-table"></i>
+                </span>
+                <span class="ml-2">Sprint</span>
+            </span>
+        </h3>
+        <br>
         <div class="columns is-8 is-variable">
             <div class="column">
                 <h3 class="is-size-4 has-text-centered">
                     <span class="icon-text">
                         <span class="icon">
-                            <i class="fas fa-tag"></i>
+                            <i class="fas fa-tags"></i>
                         </span>
-                        <span class="ml-2">Features</span>
+                        <span class="ml-2">To Do</span>
                     </span>
                 </h3>
                 <hr>
-                {% for feature in object.features.all %}
+                {% for issue in object.issues %}
+                {% if issue.status == issue.TO_DO %}
                 <div class="box">
-                    <span class="icon-text has-text-{{ feature.color }}">
+                    <span class="icon-text has-text-{{ issue.color }}">
                         <span class="icon">
-                            <i class="{{ feature.icon }}"></i>
+                            <i class="{{ issue.icon }}"></i>
                         </span>
-                        <span>{{ feature.title }}</span>
+                        <span>{{ issue.title }}</span>
                     </span>
-                    <p>{{ feature.description }}</p>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="column">
-                <h3 class="is-size-4 has-text-centered">
-                    <span class="icon-text">
-                        <span class="icon">
-                            <i class="fas fa-user-tag"></i>
-                        </span>
-                        <span class="ml-2">Skills</span>
-                    </span>
-                </h3>
-                <hr>
-                {% for skill in object.skills.all %}
-                <div class="box">
-                    <span class="icon-text has-text-{{ skill.color }}">
-                        <span class="icon">
-                            <i class="{{ skill.icon }}"></i>
-                        </span>
-                        <span>{{ skill.title }}</span>
-                    </span>
-                    <p>{{ skill.description }}</p>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="column">
-                <h3 class="is-size-4 has-text-centered">
-                    <span class="icon-text">
-                        <span class="icon">
-                            <i class="fas fa-book"></i>
-                        </span>
-                        <span class="ml-2">Epics</span>
-                    </span>
-                </h3>
-                <hr>
-                {% for epic in object.epics %}
-                {% if not epic.is_auto %}
-                <div class="box">
-                    <span class="icon-text has-text-{{ epic.color }}">
-                        <span class="icon">
-                            <i class="{{ epic.icon }}"></i>
-                        </span>
-                        <span>{{ epic.title }}</span>
-                    </span>
-                    <p>{{ epic.description }}</p>
+                    <p>{{ issue.description }}</p>
                 </div>
                 {% endif %}
                 {% endfor %}
+            </div>
+            <div class="column">
                 <h3 class="is-size-4 has-text-centered">
                     <span class="icon-text">
                         <span class="icon">
-                            <i class="far fa-check-square"></i>
+                            <i class="fas fa-tags"></i>
                         </span>
-                        <span class="ml-2">Definition of Done</span>
+                        <span class="ml-2">In Progress</span>
                     </span>
                 </h3>
                 <hr>
+                {% for issue in object.issues %}
+                {% if issue.status == issue.IN_PROGRESS %}
                 <div class="box">
-                    <br>
+                    <span class="icon-text has-text-{{ issue.color }}">
+                        <span class="icon">
+                            <i class="{{ issue.icon }}"></i>
+                        </span>
+                        <span>{{ issue.title }}</span>
+                    </span>
+                    <p>{{ issue.description }}</p>
                 </div>
-                <br>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="column">
                 <h3 class="is-size-4 has-text-centered">
                     <span class="icon-text">
                         <span class="icon">
-                            <i class="far fa-check-square"></i>
+                            <i class="fas fa-tags"></i>
                         </span>
-                        <span class="ml-2">Definition of Ready</span>
+                        <span class="ml-2">In Review</span>
                     </span>
                 </h3>
                 <hr>
+                {% for issue in object.issues %}
+                {% if issue.status == issue.IN_REVIEW %}
                 <div class="box">
-                    <br>
+                    <span class="icon-text has-text-{{ issue.color }}">
+                        <span class="icon">
+                            <i class="{{ issue.icon }}"></i>
+                        </span>
+                        <span>{{ issue.title }}</span>
+                    </span>
+                    <p>{{ issue.description }}</p>
                 </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="column">
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-tags"></i>
+                        </span>
+                        <span class="ml-2">Done</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.issues %}
+                {% if issue.status == issue.DONE %}
+                <div class="box">
+                    <span class="icon-text has-text-{{ issue.color }}">
+                        <span class="icon">
+                            <i class="{{ issue.icon }}"></i>
+                        </span>
+                        <span>{{ issue.title }}</span>
+                    </span>
+                    <p>{{ issue.description }}</p>
+                </div>
+                {% endif %}
+                {% endfor %}
             </div>
         </div>
     </section>
-
 </div>
 {% endblock page_content %}

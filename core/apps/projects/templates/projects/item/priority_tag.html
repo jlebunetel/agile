@@ -1,0 +1,4 @@
+{% load i18n %}
+<span class="icon has-text-{{ item.get_priority_color }}" title="{% trans 'Priority: ' %}{{ item.get_priority_display }}">
+    <i class="{{ item.get_priority_icon }}"></i>
+</span>

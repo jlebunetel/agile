@@ -24,52 +24,50 @@ class Product(BaseModel):
 
     @property
     def icon(self):
-        return "fas fa-paper-plane"
+        return "fas fa-rocket"
+
+    @property
+    def features(self):
+        from projects.models import Feature
+
+        return Feature.objects.filter(initiative__product=self)
 
     @property
     def epics(self):
         from projects.models import Epic
 
-        return Epic.objects.filter(initiative__product=self)
+        return Epic.objects.filter(feature__initiative__product=self)
 
     @property
     def issues(self):
         from projects.models import Issue
 
-        return Issue.objects.filter(epic__initiative__product=self)
-
-    @property
-    def total_features(self):
-        from projects.models import Feature
-
-        return Feature.objects.filter(product=self).count()
-
-    @property
-    def total_skills(self):
-        from projects.models import Skill
-
-        return Skill.objects.filter(product=self).count()
+        return Issue.objects.filter(epic__feature__initiative__product=self)
 
     @property
     def total_initiatives(self):
         from projects.models import Initiative
 
-        return Initiative.objects.filter(product=self).count() - 1
+        return Initiative.objects.filter(product=self).count()
+
+    @property
+    def total_features(self):
+        from projects.models import Feature
+
+        return Feature.objects.filter(initiative__product=self).count()
 
     @property
     def total_epics(self):
         from projects.models import Epic
 
-        return Epic.objects.filter(initiative__product=self).count() - (
-            self.total_initiatives + 1
-        )
+        return Epic.objects.filter(feature__initiative__product=self).count()
 
     @property
     def total_stories(self):
         from projects.models import Issue
 
         return Issue.objects.filter(
-            epic__initiative__product=self, label=Issue.STORY
+            epic__feature__initiative__product=self, label=Issue.STORY
         ).count()
 
     @property
@@ -77,22 +75,25 @@ class Product(BaseModel):
         from projects.models import Issue
 
         return Issue.objects.filter(
-            epic__initiative__product=self, label=Issue.BUG
+            epic__feature__initiative__product=self, label=Issue.BUG
+        ).count()
+
+    @property
+    def total_tasks(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, label=Issue.TASK
         ).count()
 
     @property
     def total_story_points(self):
         from projects.models import Issue
 
-        return int(
-            Issue.objects.filter(epic__initiative__product=self)
+        story_points = (
+            Issue.objects.filter(epic__feature__initiative__product=self)
             .exclude(points=None)
             .aggregate(models.Sum("points"))["points__sum"]
         )
 
-        return (
-            Issue.objects.filter(epic__initiative__product=self)
-            .exclude(points=None)
-            .annotate(total=models.Sum("points"))
-            .values("total")
-        )
+        return int(story_points) if story_points else 0

@@ -1,43 +1,43 @@
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
-from ordered_model.models import OrderedModel
 from simple_history.models import HistoricalRecords
-from projects.models import BaseModel, Initiative, Feature, Product
+from projects.models import (
+    BaseModel,
+    Initiative,
+    Feature,
+    Product,
+    PriorityMixin,
+    ProgressMixin,
+    TrustMixin,
+)
 
 
-class Epic(BaseModel, OrderedModel):
+class Epic(
+    PriorityMixin,
+    ProgressMixin,
+    TrustMixin,
+    BaseModel,
+):
     history = HistoricalRecords()
-
-    initiative = models.ForeignKey(
-        Initiative,
-        on_delete=models.CASCADE,
-        related_name="epics",
-        related_query_name="epic",
-        verbose_name=_("initiative"),
-    )
 
     feature = models.ForeignKey(
         Feature,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
         related_name="epics",
         related_query_name="epic",
         verbose_name=_("feature"),
     )
 
-    order_with_respect_to = "initiative__product"
-
-    class Meta(BaseModel.Meta, OrderedModel.Meta):
+    class Meta(BaseModel.Meta):
         verbose_name = _("epic")
         verbose_name_plural = _("epics")
 
-        ordering = ["order"]
-
-        constraints = [
-            models.UniqueConstraint(
-                fields=["title", "initiative"], name="epic_title_unique_per_initiative"
-            )
+        ordering = [
+            "feature__initiative__product",
+            "feature__initiative__order",
+            "-feature__priority",
+            "-priority",
+            "created_at",
         ]
 
     @property
@@ -49,16 +49,40 @@ class Epic(BaseModel, OrderedModel):
         return "fas fa-book"
 
     @property
+    def shortcut(self):
+        return "#E{}".format(self.id)
+
+    @property
     def product(self):
-        return self.initiative.product
+        return self.feature.product
+
+    def total_story_points(self):
+        points = self.issues.exclude(points=None).aggregate(models.Sum("points"))[
+            "points__sum"
+        ]
+
+        return points if points else 0
+
+    def remaining_story_points(self):
+        from projects.models import Issue
+
+        points = (
+            self.issues.exclude(points=None)
+            .exclude(status=Issue.DONE)
+            .exclude(status=Issue.CANCELLED)
+            .aggregate(models.Sum("points"))["points__sum"]
+        )
+
+        return points if points else 0
 
     @property
-    def parent(self):
-        return self.initiative
+    def trust(self):
+        from projects.models import Issue
 
-    @property
-    def is_auto(self):
-        return self.title == self.parent.title
+        if self.issues.filter(trust=Issue.LOW) or self.issues.filter(points=None):
+            return self.LOW
 
-    def __str__(self):
-        return "[E{}] {}".format(self.id, self.title)
+        if self.issues.filter(trust=Issue.MEDIUM):
+            return self.MEDIUM
+
+        return self.HIGH

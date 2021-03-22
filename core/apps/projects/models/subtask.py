@@ -5,14 +5,14 @@ from simple_history.models import HistoricalRecords
 from projects.models import BaseModel, Issue
 
 
-class Task(BaseModel, OrderedModel):
+class Subtask(BaseModel, OrderedModel):
     history = HistoricalRecords()
 
     issue = models.ForeignKey(
         Issue,
         on_delete=models.CASCADE,
-        related_name="tasks",
-        related_query_name="task",
+        related_name="subtasks",
+        related_query_name="subtask",
         verbose_name=_("issue"),
     )
 
@@ -24,10 +24,13 @@ class Task(BaseModel, OrderedModel):
     order_with_respect_to = "issue"
 
     class Meta(BaseModel.Meta, OrderedModel.Meta):
-        verbose_name = _("task")
-        verbose_name_plural = _("tasks")
+        verbose_name = _("subtask")
+        verbose_name_plural = _("subtasks")
 
-        ordering = ["order"]
+        ordering = [
+            "issue",
+            "order",
+        ]
 
     @property
     def color(self):
@@ -42,20 +45,9 @@ class Task(BaseModel, OrderedModel):
         return "far fa-square"
 
     @property
-    def parent(self):
-        return self.issue
-
-    @property
     def product(self):
-        return self.parent.product
+        return self.issue.product
 
     @property
-    def initiative(self):
-        return self.parent.initiative
-
-    @property
-    def epic(self):
-        return self.parent.epic
-
-    def __str__(self):
-        return "[T{}] {}".format(self.id, self.title)
+    def shortcut(self):
+        return "#ST{}".format(self.id)

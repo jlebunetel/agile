@@ -1,13 +1,20 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext, ugettext_lazy as _
-from ordered_model.models import OrderedModel
 from simple_history.models import HistoricalRecords
 from accounts.models import get_sentinel_user
-from projects.models import BaseModel, Epic, Feature, Initiative, Product, Skill, Sprint
+from projects.models import (
+    BaseModel,
+    Epic,
+    Skill,
+    PriorityMixin,
+)
 
 
-class Issue(BaseModel, OrderedModel):
+class Issue(
+    PriorityMixin,
+    BaseModel,
+):
     history = HistoricalRecords()
 
     title = models.TextField(
@@ -25,10 +32,12 @@ class Issue(BaseModel, OrderedModel):
 
     STORY = "STORY"
     BUG = "BUG"
+    TASK = "TASK"
 
     LABEL_CHOICES = [
         (STORY, _("Story")),
         (BUG, _("Bug")),
+        (TASK, _("Task")),
     ]
 
     label = models.CharField(
@@ -63,6 +72,16 @@ class Issue(BaseModel, OrderedModel):
         choices=STATUS_CHOICES,
         default=DRAFT,
         verbose_name=_("status"),
+        help_text=_(
+            """Draft: <br>
+            Ready: L'estimation est réaliste, les skills sont identifiées, l'issue est prête à être réalisée.<br>
+            To Do: Selectionnée pour le prochain sprint.<br>
+            In Progress: <br>
+            In Review: <br>
+            Done: <br>
+            Blocked: Un problème empêche la réalisation de l'issue.<br>
+            Cancelled: """
+        ),
     )
 
     POINTS_CHOICES = [
@@ -102,6 +121,7 @@ class Issue(BaseModel, OrderedModel):
         choices=TRUST_CHOICES,
         default=LOW,
         verbose_name=_("trust level"),
+        help_text=_("How realistic is the story point estimate?"),
     )
 
     assignee = models.ForeignKey(
@@ -109,74 +129,99 @@ class Issue(BaseModel, OrderedModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name="projects_issues",
-        related_query_name="projects_issue",
+        related_name="assigned_issues",
+        related_query_name="assigned_issue",
         verbose_name=_("assignee"),
         help_text=_("Who works on this very story?"),
         limit_choices_to={"is_active": True},
     )
 
-    feature = models.ForeignKey(
-        Feature,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name="issues",
-        related_query_name="issue",
-        verbose_name=_("feature"),
-    )
-
-    skill = models.ForeignKey(
+    skills = models.ManyToManyField(
         Skill,
         blank=True,
-        null=True,
-        on_delete=models.CASCADE,
         related_name="issues",
         related_query_name="issue",
-        verbose_name=_("required skill"),
+        verbose_name=_("required skills"),
+        help_text=_("Main skills required to achieve this issue."),
     )
 
-    sprint = models.ForeignKey(
-        Sprint,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        related_name="issues",
-        related_query_name="issue",
-        verbose_name=_("sprint"),
-    )
-
-    order_with_respect_to = "epic__initiative"
-
-    class Meta(BaseModel.Meta, OrderedModel.Meta):
+    class Meta(BaseModel.Meta):
         verbose_name = _("issue")
         verbose_name_plural = _("issues")
 
-        ordering = ["order"]
+        ordering = [
+            "epic__feature__initiative__product",
+            "epic__feature__initiative__order",
+            "-epic__feature__priority",
+            "-epic__priority",
+            "-priority",
+            "created_at",
+        ]
 
     @property
     def color(self):
-        if self.label == self.BUG:
+        if self.status == self.BLOCKED:
             return "danger"
-        return "success"
+
+        if self.status in [self.DONE, self.CANCELLED]:
+            return "grey-lighter"
+
+        return "grey"
 
     @property
     def icon(self):
         if self.label == self.BUG:
             return "fas fa-bug"
+
+        elif self.label == self.TASK:
+            return "fas fa-check-square"
+
         return "fas fa-bookmark"
 
     @property
+    def shortcut(self):
+        return "#{}{}".format(self.label[0].upper(), self.id)
+
+    @property
     def product(self):
-        return self.epic.initiative.product
+        return self.epic.product
 
-    @property
-    def initiative(self):
-        return self.epic.initiative
+    def get_trust_color(self):
+        if self.points == None:
+            return "danger"
 
-    @property
-    def parent(self):
-        return self.epic
+        if self.trust == self.HIGH:
+            return "light"
 
-    def __str__(self):
-        return "[{}{}] {}".format(self.label[0], self.id, self.title)
+        elif self.trust == self.MEDIUM:
+            return "warning"
+
+        else:
+            return "danger"
+
+    def get_status_color(self):
+        if self.status == self.DRAFT:
+            return "warning"
+
+        if self.status == self.READY:
+            return "success"
+
+        if self.status == self.TO_DO:
+            return "info"
+
+        if self.status == self.IN_PROGRESS:
+            return "warning"
+
+        if self.status == self.IN_REVIEW:
+            return "success"
+
+        if self.status == self.DONE:
+            return "light"
+
+        if self.status == self.BLOCKED:
+            return "danger"
+
+        if self.status == self.CANCELLED:
+            return "light"
+
+        return "light"

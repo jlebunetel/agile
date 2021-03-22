@@ -15,67 +15,21 @@ class BaseInlineFormSet(forms.BaseInlineFormSet):
 
 
 class BaseInlineAdminForm(forms.ModelForm):
-    """Permets de :
-    - limiter la liste des « features » selectionnables dans les forms inlines à celles liées au Product.
-      attention : pour le form principal, on fait la même chose dans BaseAdminForm
-    - rendre non éditable les objets enfants créé par défault (c'est à dire qui on le même title)
-      attention : pour le form principal, on utilise get_readonly_fields()
-    """
+    """Permets au FormInline d'interagir avec l'object du Form principal."""
 
     def __init__(self, *args, parent=None, **kwargs):
         super(BaseInlineAdminForm, self).__init__(*args, **kwargs)
-
-        if self.instance and self.instance.id:
-            if self.instance.title == parent.title:
-                if "title" in self.fields:
-                    self.fields["title"].widget.attrs["readonly"] = "readonly"
-
-                if "description" in self.fields:
-                    self.fields["description"].widget.attrs["readonly"] = "readonly"
-
-                if "feature" in self.fields:
-                    self.fields["feature"].disabled = True
-
-                if "skill" in self.fields:
-                    self.fields["skill"].disabled = True
-
-                if "sprint" in self.fields:
-                    self.fields["sprint"].disabled = True
-
-        if hasattr(parent, "product"):
-            if "feature" in self.fields:
-                self.fields["feature"].queryset = parent.product.features.all()
-
-            if "skill" in self.fields:
-                self.fields["skill"].queryset = parent.product.skills.all()
-
-            if "sprint" in self.fields:
-                self.fields["sprint"].queryset = parent.product.sprints.all()
-
-            if "initiative" in self.fields:
-                self.fields["initiative"].queryset = parent.product.initiatives.all()
-
-            if "epic" in self.fields:
-                self.fields["epic"].queryset = parent.product.epics.all()
 
 
 class BaseInlineMixin(object):
     form = BaseInlineAdminForm
     formset = BaseInlineFormSet
-
     extra = 1
-
+    show_change_link = True
     readonly_fields = ("id",)
 
 
-class BaseInlineOrderMixin(object):
-    form = BaseInlineAdminForm
-    formset = BaseInlineFormSet
-
-    extra = 1
-
-    show_change_link = True
-
+class BaseInlineOrderMixin(BaseInlineMixin):
     readonly_fields = (
         "id",
         "move_up_down_links",
@@ -83,31 +37,28 @@ class BaseInlineOrderMixin(object):
 
 
 class BaseAdminForm(forms.ModelForm):
-    """Permets de limiter la liste des « features » et des « initiatives » selectionnables dans les forms à celles liées au Product."""
+    """Permets de limiter les choix dans les listes déroulantes."""
 
     def __init__(self, *args, **kwargs):
         super(BaseAdminForm, self).__init__(*args, **kwargs)
 
         if self.instance.id and hasattr(self.instance, "product"):
-            if "feature" in self.fields:
-                self.fields["feature"].queryset = self.instance.product.features.all()
-
-            if "skill" in self.fields:
-                self.fields["skill"].queryset = self.instance.product.skills.all()
-
-            if "sprint" in self.fields:
-                self.fields["sprint"].queryset = self.instance.product.sprints.all()
-
             if "initiative" in self.fields:
                 self.fields[
                     "initiative"
                 ].queryset = self.instance.product.initiatives.all()
+
+            if "feature" in self.fields:
+                self.fields["feature"].queryset = self.instance.product.features.all()
 
             if "epic" in self.fields:
                 self.fields["epic"].queryset = self.instance.product.epics.all()
 
             if "issue" in self.fields:
                 self.fields["issue"].queryset = self.instance.product.issues.all()
+
+            # if "sprint" in self.fields:
+            #    self.fields["sprint"].queryset = self.instance.product.sprints.all()
 
 
 class BaseModelMixin(object):
@@ -134,38 +85,17 @@ class BaseModelMixin(object):
             return fieldsets_base + ((_("specific fields"), {"fields": self.fields}),)
         return fieldsets_base
 
+    readonly_fields_base = (
+        "id",
+        "created_at",
+        "created_by",
+        "changed_at",
+        "changed_by",
+        "owner",
+    )
+
     def get_readonly_fields(self, request, obj=None):
-
-        readonly_fields_base = (
-            "id",
-            "created_at",
-            "created_by",
-            "changed_at",
-            "changed_by",
-        )
-
-        if obj:
-            readonly_fields_parent = ("owner", "product")
-
-            # rendre non éditable les objets enfants créés par défault:
-            if hasattr(obj, "parent"):
-                if obj.title == obj.parent.title:
-                    readonly_fields_parent += (
-                        "title",
-                        "description",
-                        "feature",
-                        "skill",
-                        "sprint",
-                    )
-
-            return self.readonly_fields + readonly_fields_base + readonly_fields_parent
-
-        else:
-            return (
-                self.readonly_fields
-                + readonly_fields_base
-                + ("owner", "feature", "skill", "sprint")
-            )
+        return self.readonly_fields + self.readonly_fields_base
 
     def get_list_display(self, request):
         list_display_base = ()
