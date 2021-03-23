@@ -1,16 +1,21 @@
-<a class="modal-button" data-target="{{ item.shortcut }}">
-    <span class="icon has-text-grey-lighter">
-        <i class="fas fa-comment"></i>
-    </span>
-</a>
+{% load i18n %}
 <div class="modal" id="{{ item.shortcut }}">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title">{% include "projects/item/full_title.html" %}</p>
+            <p class="modal-card-title">
+                <span class="icon-text has-text-{{ item.color }}">
+                    <span class="icon">
+                        <i class="{{ item.icon }}"></i>
+                    </span>
+                    <span>[#{{ item.shortcut }}]</span>
+                </span>
+            </p>
             <button class="delete modal-button" aria-label="close" data-target="{{ item.shortcut }}"></button>
         </header>
         <section class="modal-card-body">
+            <h2 class="is-size-4">{{ item.title }}</h2>
+            <br>
             {% if item.description %}
             <p class="is-italic has-text-weight-bold">Description:</p>
             <p class="content">{{ item.description_html|safe }}</p>
@@ -35,5 +40,9 @@
             <br>
             {% endif %}
         </section>
+        <footer class="modal-card-foot">
+            <a href="{{ item.get_edit_url }}" class="button is-success">{% trans 'Change' %}</a>
+            <button class="button modal-button" data-target="{{ item.shortcut }}">{% trans 'Close' %}</button>
+        </footer>
     </div>
 </div>
