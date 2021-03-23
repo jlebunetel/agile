@@ -89,9 +89,12 @@ class TrustMixin(models.Model):
         for t in self.TRUST_CHOICES:
             if trust == t[0]:
                 return t[1]
-        return selt.LOW
+        return self.LOW
 
     def get_trust_color(self):
+        total = self.total_story_points()
+        if not total:
+            return "warning"
         if self.trust == self.HIGH:
             return "light"
         elif self.trust == self.MEDIUM:
