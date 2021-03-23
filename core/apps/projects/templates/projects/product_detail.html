@@ -276,102 +276,160 @@
         <br>
         <div class="columns is-8 is-variable">
             <div class="column">
+                {% if object.todo_issues %}
                 <h3 class="is-size-4 has-text-centered">
                     <span class="icon-text">
                         <span class="icon">
                             <i class="fas fa-tags"></i>
                         </span>
-                        <span class="ml-2">To Do</span>
+                        <span class="ml-2">{% trans 'To Do' %}</span>
                     </span>
                 </h3>
                 <hr>
-                {% for issue in object.issues %}
-                {% if issue.status == issue.TO_DO %}
-                <div class="box">
-                    <span class="icon-text has-text-{{ issue.color }}">
-                        <span class="icon">
-                            <i class="{{ issue.icon }}"></i>
-                        </span>
-                        <span>{{ issue.title }}</span>
-                    </span>
-                    <p>{{ issue.description }}</p>
-                </div>
-                {% endif %}
+                {% for issue in object.todo_issues %}
+                {% include "projects/card/issue.html" %}
                 {% endfor %}
+                <br>
+                <br>
+                {% endif %}
+
+                {% if object.ready_issues %}
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-tags"></i>
+                        </span>
+                        <span class="ml-2">{% trans 'Ready' %}</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.ready_issues %}
+                {% include "projects/card/issue.html" %}
+                {% endfor %}
+                <br>
+                <br>
+                {% endif %}
+
+                {% if object.draft_issues %}
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-tags"></i>
+                        </span>
+                        <span class="ml-2">{% trans 'Draft' %}</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.draft_issues %}
+                {% include "projects/card/issue.html" %}
+                {% endfor %}
+                <br>
+                <br>
+                {% endif %}
             </div>
             <div class="column">
+                {% if object.blocked_issues %}
                 <h3 class="is-size-4 has-text-centered">
                     <span class="icon-text">
                         <span class="icon">
                             <i class="fas fa-tags"></i>
                         </span>
-                        <span class="ml-2">In Progress</span>
+                        <span class="ml-2">{% trans 'Blocked' %}</span>
                     </span>
                 </h3>
                 <hr>
-                {% for issue in object.issues %}
-                {% if issue.status == issue.IN_PROGRESS %}
-                <div class="box">
-                    <span class="icon-text has-text-{{ issue.color }}">
-                        <span class="icon">
-                            <i class="{{ issue.icon }}"></i>
-                        </span>
-                        <span>{{ issue.title }}</span>
-                    </span>
-                    <p>{{ issue.description }}</p>
-                </div>
-                {% endif %}
+                {% for issue in object.blocked_issues %}
+                {% include "projects/card/issue.html" %}
                 {% endfor %}
+                <br>
+                <br>
+                {% endif %}
+
+                {% if object.inprogress_issues %}
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-tags"></i>
+                        </span>
+                        <span class="ml-2">{% trans 'In Progress' %}</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.inprogress_issues %}
+                {% include "projects/card/issue.html" %}
+                {% endfor %}
+                <br>
+                <br>
+                {% endif %}
             </div>
             <div class="column">
+                {% if object.inreview_issues %}
                 <h3 class="is-size-4 has-text-centered">
                     <span class="icon-text">
                         <span class="icon">
                             <i class="fas fa-tags"></i>
                         </span>
-                        <span class="ml-2">In Review</span>
+                        <span class="ml-2">{% trans 'In Review' %}</span>
                     </span>
                 </h3>
                 <hr>
-                {% for issue in object.issues %}
-                {% if issue.status == issue.IN_REVIEW %}
-                <div class="box">
-                    <span class="icon-text has-text-{{ issue.color }}">
-                        <span class="icon">
-                            <i class="{{ issue.icon }}"></i>
-                        </span>
-                        <span>{{ issue.title }}</span>
-                    </span>
-                    <p>{{ issue.description }}</p>
-                </div>
-                {% endif %}
+                {% for issue in object.inreview_issues %}
+                {% include "projects/card/issue.html" %}
                 {% endfor %}
-            </div>
-            <div class="column">
+                <br>
+                <br>
+                {% endif %}
+
+                {% if object.done_issues %}
                 <h3 class="is-size-4 has-text-centered">
                     <span class="icon-text">
                         <span class="icon">
                             <i class="fas fa-tags"></i>
                         </span>
-                        <span class="ml-2">Done</span>
+                        <span class="ml-2">{% trans 'Done' %}</span>
                     </span>
                 </h3>
                 <hr>
-                {% for issue in object.issues %}
-                {% if issue.status == issue.DONE %}
-                <div class="box">
-                    <span class="icon-text has-text-{{ issue.color }}">
-                        <span class="icon">
-                            <i class="{{ issue.icon }}"></i>
-                        </span>
-                        <span>{{ issue.title }}</span>
-                    </span>
-                    <p>{{ issue.description }}</p>
-                </div>
-                {% endif %}
+                {% for issue in object.done_issues %}
+                {% include "projects/card/issue.html" %}
                 {% endfor %}
+                <br>
+                <br>
+                {% endif %}
+
+                {% if object.cancelled_issues %}
+                <h3 class="is-size-4 has-text-centered">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-tags"></i>
+                        </span>
+                        <span class="ml-2">{% trans 'Cancelled' %}</span>
+                    </span>
+                </h3>
+                <hr>
+                {% for issue in object.cancelled_issues %}
+                {% include "projects/card/issue.html" %}
+                {% endfor %}
+                <br>
+                <br>
+                {% endif %}
             </div>
         </div>
     </section>
+
+    <div>
+        {% for initiative in object.initiatives.all %}
+        {% include "projects/modal/description.html" with item=initiative %}
+            {% for feature in initiative.features.all %}
+            {% include "projects/modal/description.html" with item=feature %}
+                {% for epic in feature.epics.all %}
+                {% include "projects/modal/description.html" with item=epic %}
+                    {% for issue in epic.issues.all %}
+                    {% include "projects/modal/description.html" with item=issue %}
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </div>
 </div>
 {% endblock page_content %}

@@ -17,8 +17,14 @@ class IssueAdminCleanMixin(object):
         cleaned_data = super().clean()
         # current_status = object.instance.status
         status = cleaned_data.get("status")
+
         points = cleaned_data.get("points")
+        if points == None:
+            points = object.instance.points
+
         trust = cleaned_data.get("trust")
+        if not trust:
+            trust = object.instance.trust
 
         if (
             status

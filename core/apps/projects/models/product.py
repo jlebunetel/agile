@@ -45,6 +45,70 @@ class Product(BaseModel):
         return Issue.objects.filter(epic__feature__initiative__product=self)
 
     @property
+    def draft_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.DRAFT
+        )
+
+    @property
+    def ready_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.READY
+        )
+
+    @property
+    def todo_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.TO_DO
+        )
+
+    @property
+    def inprogress_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.IN_PROGRESS
+        )
+
+    @property
+    def inreview_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.IN_REVIEW
+        )
+
+    @property
+    def done_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.DONE
+        )
+
+    @property
+    def blocked_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.BLOCKED
+        )
+
+    @property
+    def cancelled_issues(self):
+        from projects.models import Issue
+
+        return Issue.objects.filter(
+            epic__feature__initiative__product=self, status=Issue.CANCELLED
+        )
+
+    @property
     def total_initiatives(self):
         from projects.models import Initiative
 
