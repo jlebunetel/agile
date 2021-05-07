@@ -225,3 +225,11 @@ class Issue(
             return "light"
 
         return "light"
+
+    def duration(self):
+        if self.points == None:
+            return "?"
+
+        return "≈ {0:2.0f}h{1:02.0f}".format(
+            *divmod(self.product.point_duration * self.points * 60, 60)
+        )

@@ -109,6 +109,7 @@ class IssueAdmin(
         # "label",
         "status",
         "points",
+        "duration",
         "trust",
         "priority",
         "epic",
