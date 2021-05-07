@@ -106,13 +106,20 @@ class IssueAdmin(
 
     list_display = (
         "__str__",
-        "label",
+        # "label",
         "status",
         "points",
         "trust",
-        "epic",
         "priority",
+        "epic",
         "product",
+        "changed_at",
+    )
+
+    list_filter = (
+        "status",
+        "label",
+        "priority",
     )
 
     inlines = [

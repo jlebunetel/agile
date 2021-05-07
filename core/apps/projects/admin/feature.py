@@ -39,6 +39,7 @@ class FeatureAdmin(
         "priority",
         "description",
         "product",
+        "changed_at",
     )
 
     inlines = [
