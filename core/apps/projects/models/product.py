@@ -11,6 +11,12 @@ class Product(BaseModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
+    point_duration = models.FloatField(
+        default=1.0,
+        verbose_name=_("point duration (h)"),
+        help_text=_("An approximate story point duration (in hours)."),
+    )
+
     class Meta(BaseModel.Meta):
         verbose_name = _("product")
         verbose_name_plural = _("products")

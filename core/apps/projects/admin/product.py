@@ -16,11 +16,13 @@ class ProductAdmin(
     fields = (
         "title",
         "description",
+        "point_duration",
     )
 
     list_display = (
         "__str__",
         "description",
+        "point_duration",
         "changed_at",
     )
 
