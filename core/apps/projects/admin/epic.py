@@ -41,6 +41,7 @@ class EpicAdmin(
         "priority",
         "description",
         "product",
+        "changed_at",
     )
 
     inlines = [

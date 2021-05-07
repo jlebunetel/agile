@@ -40,6 +40,7 @@ class InitiativeAdmin(
         "__str__",
         "description",
         "product",
+        "changed_at",
     )
 
     list_filter = ("product",)

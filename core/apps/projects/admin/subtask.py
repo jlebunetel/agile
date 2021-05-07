@@ -38,7 +38,10 @@ class SubtaskAdmin(
         "done",
         "issue",
         "product",
+        "changed_at",
     )
+
+    list_filter = ("done",)
 
 
 admin.site.register(Subtask, SubtaskAdmin)

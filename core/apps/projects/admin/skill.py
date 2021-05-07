@@ -18,6 +18,7 @@ class SkillAdmin(
     list_display = (
         "__str__",
         "description",
+        "changed_at",
     )
 
 
